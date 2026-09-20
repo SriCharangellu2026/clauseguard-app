@@ -14,4 +14,9 @@ export default defineConfig({
       'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
     },
   },
+  preview: {
+    host: '0.0.0.0',
+    port: 3000,
+    allowedHosts: true,
+  },
 })
