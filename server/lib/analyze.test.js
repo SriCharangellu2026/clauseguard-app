@@ -46,6 +46,9 @@ test('sample MSA splits, grounds §2.1 as Med not Low, and queues low-confidence
   const { score, contributions } = computeRiskScore(analysis.clauses)
   assert.ok(score >= 30)
   assert.ok(contributions.some((row) => row.section === '2.1' && row.points === 6))
+  const high = analysis.clauses.find((row) => row.section === '4.1')
+  assert.equal(high.acceptDelta, -12)
+  assert.equal(computeRiskScore([]).score, 30)
 })
 
 test('hash chain is deterministic', () => {

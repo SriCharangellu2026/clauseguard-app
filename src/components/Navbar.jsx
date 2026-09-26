@@ -28,11 +28,12 @@ export default function Navbar({
   onUpload,
   onSample,
   ocrUsed,
+  previewDelta,
 }) {
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-line bg-panel/90 px-4 backdrop-blur">
       <div className="flex min-w-0 items-center gap-3">
-        <button type="button" className={`rounded-lg border border-line p-2 lg:hidden ${FOCUS_RING}`} onClick={onToggleLeft} aria-label="Toggle clause register">
+        <button type="button" className={`rounded-lg border border-line p-2 ${FOCUS_RING}`} onClick={onToggleLeft} aria-label="Toggle clause register">
           <PanelLeft size={16} />
         </button>
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--gold)]/15 text-[var(--gold)]" aria-hidden="true">
@@ -52,6 +53,7 @@ export default function Navbar({
       <div className="flex flex-wrap items-center justify-end gap-2">
         <span className="rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-line" aria-label={`Risk ${band.label}, score ${score}`}>
           {band.label} · {score}
+          {previewDelta != null ? ` · §${previewDelta.section} → ${previewDelta.delta}` : ''}
         </span>
         <label className={`cursor-pointer rounded-lg border border-line px-3 py-1.5 text-xs font-medium ${FOCUS_RING}`}>
           <Upload size={14} className="mr-1 inline" aria-hidden="true" />
@@ -78,14 +80,21 @@ export default function Navbar({
           <FileJson size={14} className="mr-1 inline" aria-hidden="true" />
           JSON
         </button>
-        <button type="button" onClick={onExportDocx} className={`rounded-lg bg-[var(--gold)] px-3 py-1.5 text-xs font-semibold text-[var(--ink)] ${FOCUS_RING}`} aria-label="Export Word file with tracked changes">
+        <button
+          type="button"
+          onClick={onExportDocx}
+          disabled={user.role !== 'approver'}
+          title={user.role === 'approver' ? 'Download Word with tracked changes' : 'Approver role required'}
+          className={`rounded-lg bg-[var(--gold)] px-3 py-1.5 text-xs font-semibold text-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-40 ${FOCUS_RING}`}
+          aria-label={user.role === 'approver' ? 'Export Word file with tracked changes' : 'Word export requires the approver role'}
+        >
           <FileDown size={14} className="mr-1 inline" aria-hidden="true" />
           Word redline
         </button>
         <button type="button" onClick={onTheme} className={`rounded-lg border border-line p-2 ${FOCUS_RING}`} aria-label="Toggle light and dark theme">
           {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
         </button>
-        <button type="button" className={`hidden rounded-lg border border-line p-2 lg:inline-flex ${FOCUS_RING}`} onClick={onToggleRight} aria-label="Toggle risk panel">
+        <button type="button" className={`rounded-lg border border-line p-2 ${FOCUS_RING}`} onClick={onToggleRight} aria-label="Toggle risk panel">
           <PanelRight size={16} />
         </button>
         <button type="button" onClick={onLogout} className={`rounded-lg border border-line px-3 py-1.5 text-xs ${FOCUS_RING}`} aria-label={`Sign out ${user.name}`}>

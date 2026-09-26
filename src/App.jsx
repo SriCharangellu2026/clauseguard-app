@@ -130,7 +130,9 @@ export default function App() {
         nextUnresolved()
       } else if (event.key === 'a' || event.key === 'A') {
         event.preventDefault()
-        if (selected) run(() => api.accept(selected.id).then(applyWorkspace))
+        if (selected && selected.disposition === 'pending') {
+          run(() => api.accept(selected.id).then(applyWorkspace))
+        }
       } else if (event.key === 'r' || event.key === 'R') {
         event.preventDefault()
         if (selected) setRejecting(selected)
@@ -185,6 +187,7 @@ export default function App() {
         score={workspace.score}
         theme={theme}
         ocrUsed={workspace.ocrUsed}
+        previewDelta={previewDelta}
         onTheme={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
         onToggleLeft={() => setLeftOpen((value) => !value)}
         onToggleRight={() => setRightOpen((value) => !value)}
@@ -207,7 +210,7 @@ export default function App() {
       ) : null}
       {busy ? <p className="sr-only" aria-live="polite">Working</p> : null}
       <div id="main-workspace" tabIndex={-1} className="flex min-h-0 flex-1">
-        <div className={`${leftOpen ? 'flex w-full max-w-xs' : 'hidden'} min-h-0 shrink-0 flex-col lg:flex`}>
+        <div className={`${leftOpen ? 'flex w-full max-w-xs' : 'hidden'} min-h-0 shrink-0 flex-col`}>
           <ClauseTree
             clauses={workspace.clauses}
             selectedId={selected?.id}
@@ -221,27 +224,29 @@ export default function App() {
             onNextUnresolved={nextUnresolved}
           />
         </div>
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <RedlinePanel
-            clause={selected}
-            view={view}
-            onView={setView}
-            user={user}
-            previewDelta={previewDelta}
-            onPreview={setPreviewDelta}
-            onAccept={(clause) => run(() => api.accept(clause.id).then(applyWorkspace))}
-            onReject={(clause) => setRejecting(clause)}
-            onSelectPosition={(id, positionId) => run(() => api.selectPosition(id, positionId).then(applyWorkspace))}
-            onSaveEdit={(id, text) => run(() => api.edit(id, text).then(applyWorkspace))}
-            onAssignReview={(id, severity) => run(() => api.assignReview(id, severity).then(applyWorkspace))}
-          />
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col xl:flex-row">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+            <RedlinePanel
+              clause={selected}
+              view={view}
+              onView={setView}
+              user={user}
+              previewDelta={previewDelta}
+              onPreview={setPreviewDelta}
+              onAccept={(clause) => run(() => api.accept(clause.id).then(applyWorkspace))}
+              onReject={(clause) => setRejecting(clause)}
+              onSelectPosition={(id, positionId) => run(() => api.selectPosition(id, positionId).then(applyWorkspace))}
+              onSaveEdit={(id, text) => run(() => api.edit(id, text).then(applyWorkspace))}
+              onAssignReview={(id, severity) => run(() => api.assignReview(id, severity).then(applyWorkspace))}
+            />
+          </div>
           <DocumentMap
             fullText={workspace.fullText}
             clause={selected}
             onJump={() => document.getElementById('source-current-clause')?.scrollIntoView({ block: 'center' })}
           />
         </div>
-        <div className={`${rightOpen ? 'flex w-full max-w-xs' : 'hidden'} min-h-0 shrink-0 flex-col border-l border-line bg-panel lg:flex`}>
+        <div className={`${rightOpen ? 'flex w-full max-w-xs' : 'hidden'} min-h-0 shrink-0 flex-col border-l border-line bg-panel`}>
           <RiskGauge
             score={workspace.score}
             previewDelta={previewDelta}

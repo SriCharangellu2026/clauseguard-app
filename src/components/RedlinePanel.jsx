@@ -94,7 +94,7 @@ export default function RedlinePanel({
   const review = clause.disposition === 'review'
 
   return (
-    <section className="flex h-full min-h-0 flex-col" aria-label="Redline comparison">
+    <section className="flex min-h-0 flex-1 flex-col" aria-label="Redline comparison">
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--gold)]">
@@ -103,7 +103,7 @@ export default function RedlinePanel({
           <h2 className="mt-1 font-serif text-2xl">{clause.title}</h2>
           <p className="mt-1 text-xs text-[var(--muted)]">
             Model confidence {(clause.confidence * 100).toFixed(0)}%
-            {clause.acceptDelta ? ` · Accept preview ${clause.acceptDelta}` : ''}
+            {clause.acceptDelta ? ` · Accept preview §${clause.section} → ${clause.acceptDelta}` : ''}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -123,12 +123,12 @@ export default function RedlinePanel({
             type="button"
             disabled={locked || review}
             onClick={() => onAccept(clause)}
-            onMouseEnter={() => onPreview(clause.acceptDelta)}
+            onMouseEnter={() => onPreview({ section: clause.section, delta: clause.acceptDelta || 0 })}
             onMouseLeave={() => onPreview(null)}
-            onFocus={() => onPreview(clause.acceptDelta)}
+            onFocus={() => onPreview({ section: clause.section, delta: clause.acceptDelta || 0 })}
             onBlur={() => onPreview(null)}
             className={`rounded-lg bg-[var(--mint)] px-3 py-2 text-sm font-semibold text-[var(--ink)] disabled:opacity-40 ${FOCUS_RING}`}
-            aria-label={`Accept redline, score change ${clause.acceptDelta || 0}. ${previewDelta != null ? `Preview ${previewDelta}` : ''}`}
+            aria-label={`Accept redline for section ${clause.section}, score change ${clause.acceptDelta || 0}.`}
           >
             <Check size={14} className="mr-1 inline" aria-hidden="true" />
             Accept (A)
@@ -191,6 +191,9 @@ export default function RedlinePanel({
                     disabled={locked}
                   />
                   <span className="font-semibold">{position.label}</span>
+                  {position.id === 'walkaway' ? (
+                    <span className="mt-1 block text-[10px] font-semibold uppercase tracking-wide text-rose-500">Approver-only walk-away</span>
+                  ) : null}
                   <span className="mt-1 block text-xs text-[var(--muted)]">{position.note || position.text.slice(0, 120)}…</span>
                 </label>
               ))}

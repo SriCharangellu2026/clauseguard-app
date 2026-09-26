@@ -16,7 +16,7 @@ export function clauseWeight(clause) {
 
 export function computeRiskScore(clauses) {
   if (!Array.isArray(clauses) || clauses.length === 0) {
-    return { score: 78, remaining: 48, contributions: [] }
+    return { score: TARGET_SCORE, remaining: 0, contributions: [] }
   }
   const contributions = clauses
     .map((clause) => ({

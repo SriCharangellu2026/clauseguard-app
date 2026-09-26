@@ -7,7 +7,8 @@ const TARGET = 30
 export default function RiskGauge({ score, previewDelta, contributions, categories, interactions, missing }) {
   const [display, setDisplay] = useState(score)
   const displayRef = useRef(score)
-  const preview = previewDelta == null ? display : Math.max(30, Math.min(100, score + previewDelta))
+  const previewOffset = previewDelta?.delta ?? 0
+  const preview = previewDelta == null ? display : Math.max(30, Math.min(100, score + previewOffset))
 
   useEffect(() => {
     const from = displayRef.current
@@ -62,7 +63,11 @@ export default function RiskGauge({ score, previewDelta, contributions, categori
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="font-serif text-4xl">{shown}</span>
-            <span className="text-[11px] text-[var(--muted)]">{previewDelta != null ? `Preview ${previewDelta}` : `Target ${TARGET}`}</span>
+            <span className="px-2 text-center text-[11px] leading-4 text-[var(--muted)]">
+              {previewDelta != null
+                ? `§${previewDelta.section} accepted → ${previewDelta.delta > 0 ? '+' : ''}${previewDelta.delta}`
+                : `Target ${TARGET}`}
+            </span>
           </div>
         </div>
       </div>
