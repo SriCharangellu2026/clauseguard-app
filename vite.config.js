@@ -6,7 +6,9 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     port: 5173,
-    host: '0.0.0.0',
+    // Listen on IPv6 :: with dual-stack (bindv6only=0) so both
+    // http://localhost:5173 (::1, Chrome's first lookup) and 127.0.0.1 work.
+    host: '::',
     strictPort: true,
     proxy: {
       '/api': {
