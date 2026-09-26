@@ -128,7 +128,7 @@ export default function RedlinePanel({
             onFocus={() => onPreview({ section: clause.section, delta: clause.acceptDelta || 0 })}
             onBlur={() => onPreview(null)}
             className={`rounded-lg bg-[var(--mint)] px-3 py-2 text-sm font-semibold text-[var(--ink)] disabled:opacity-40 ${FOCUS_RING}`}
-            aria-label={`Accept redline for section ${clause.section}, score change ${clause.acceptDelta || 0}.`}
+            title={`§${clause.section} accepted → ${clause.acceptDelta || 0}`}
           >
             <Check size={14} className="mr-1 inline" aria-hidden="true" />
             Accept (A)
